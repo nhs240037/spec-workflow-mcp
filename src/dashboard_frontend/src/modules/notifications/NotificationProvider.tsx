@@ -72,23 +72,23 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       // Create a simple notification beep programmatically
       // Using a publicly available notification sound for reliable testing
       // You can replace this with a local audio file later
-      const notificationSound = 'https://notificationsounds.com/storage/sounds/file-sounds-1150-pristine.mp3';
+      const notificationSound = "./assets/sounds/file-sounds-1150-pristine.mp3";
 
       const sound = new Howl({
         src: [notificationSound],
         volume: volume,  // Howler.js volume control - should work correctly!
         html5: true, // Use HTML5 Audio (more reliable for simple sounds)
-        onend: function() {
+        onend: function () {
           sound.unload(); // Clean up after playing
         },
-        onload: function() {
+        onload: function () {
           console.log('[Audio] Howler sound loaded successfully');
         },
-        onloaderror: function(id, error) {
+        onloaderror: function (id, error) {
           console.error('[Audio] Howler load error:', id, error);
           // Fallback: try to play with Web Audio anyway
         },
-        onplayerror: function(id, error) {
+        onplayerror: function (id, error) {
           console.error('[Audio] Howler play error:', id, error);
         }
       });
@@ -128,22 +128,22 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const handleTaskUpdate = useCallback(async (specName: string, specDisplayName: string) => {
     try {
       console.log('[NotificationProvider] Handling task update for:', specName);
-      
+
       // Fetch detailed task progress
       const currentTaskData = await getSpecTasksProgress(specName);
       const prevTaskData = prevTaskDataRef.current.get(specName);
-      
+
       console.log('[NotificationProvider] Current task data:', currentTaskData);
       console.log('[NotificationProvider] Previous task data:', prevTaskData);
-      
+
       if (prevTaskData && currentTaskData) {
         // Check for completion changes
         if (currentTaskData.completed > prevTaskData.completed) {
           const newlyCompleted = currentTaskData.completed - prevTaskData.completed;
-          const message = newlyCompleted === 1 
+          const message = newlyCompleted === 1
             ? `Task completed in ${specDisplayName} (${currentTaskData.completed}/${currentTaskData.total})`
             : `${newlyCompleted} tasks completed in ${specDisplayName} (${currentTaskData.completed}/${currentTaskData.total})`;
-          
+
           console.log('[NotificationProvider] Task completion detected:', message);
           showNotification(message, 'success');
         }
@@ -161,20 +161,20 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             showNotification(message, 'info');
           }
         }
-        
+
         // Check if all tasks are now completed (project finished)
-        if (currentTaskData.completed === currentTaskData.total && 
-            prevTaskData.completed < currentTaskData.total && 
-            currentTaskData.total > 0) {
+        if (currentTaskData.completed === currentTaskData.total &&
+          prevTaskData.completed < currentTaskData.total &&
+          currentTaskData.total > 0) {
           const message = `🎉 All tasks completed in ${specDisplayName}!`;
           console.log('[NotificationProvider] Project completion detected:', message);
           showNotification(message, 'success');
         }
       }
-      
+
       // Store current data for next comparison
       prevTaskDataRef.current.set(specName, currentTaskData);
-      
+
     } catch (error) {
       console.error('[NotificationProvider] Failed to handle task update:', error);
     }
@@ -192,7 +192,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     // Find new approvals by comparing IDs (not just array length)
     const prevIds = new Set(prevApprovalsRef.current.map(a => a.id));
     const newApprovals = approvals.filter(a => !prevIds.has(a.id));
-    
+
     if (newApprovals.length > 0) {
       // Play sound once for all new approvals
       playNotificationSound();
@@ -278,8 +278,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
       // Check if all tasks are now completed (project finished)
       if (currentTaskData.completed === currentTaskData.total &&
-          prevTaskData.completed < currentTaskData.total &&
-          currentTaskData.total > 0) {
+        prevTaskData.completed < currentTaskData.total &&
+        currentTaskData.total > 0) {
         const message = `🎉 All tasks completed in ${specDisplayName}!`;
         console.log('[NotificationProvider] Project completion detected:', message);
         showNotification(message, 'success');
@@ -331,27 +331,25 @@ function NotificationToasts() {
       {notifications.map(notification => (
         <div
           key={notification.id}
-          className={`rounded-lg p-4 shadow-lg border transition-all duration-300 ease-in-out ${
-            notification.type === 'error' 
+          className={`rounded-lg p-4 shadow-lg border transition-all duration-300 ease-in-out ${notification.type === 'error'
               ? 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200'
               : notification.type === 'warning'
-              ? 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200'  
-              : notification.type === 'success'
-              ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200'
-              : 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200'
-          }`}
+                ? 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200'
+                : notification.type === 'success'
+                  ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200'
+                  : 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200'
+            }`}
         >
           <div className="flex items-start justify-between">
             <div className="flex items-start space-x-2">
-              <svg 
-                className={`w-5 h-5 mt-0.5 flex-shrink-0 ${
-                  notification.type === 'error' ? 'text-red-500' :
-                  notification.type === 'warning' ? 'text-yellow-500' :
-                  notification.type === 'success' ? 'text-green-500' :
-                  'text-blue-500'
-                }`}
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className={`w-5 h-5 mt-0.5 flex-shrink-0 ${notification.type === 'error' ? 'text-red-500' :
+                    notification.type === 'warning' ? 'text-yellow-500' :
+                      notification.type === 'success' ? 'text-green-500' :
+                        'text-blue-500'
+                  }`}
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 {notification.type === 'error' ? (

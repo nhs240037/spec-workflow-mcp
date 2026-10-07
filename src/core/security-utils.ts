@@ -33,6 +33,14 @@ export const VITE_DEV_PORT = 5173;
 export function generateAllowedOrigins(port: number): string[] {
   const origins = [`http://localhost:${port}`, `http://127.0.0.1:${port}`];
 
+  // Allow additional explicitly configured origins
+  const extraOrigins = process.env.SPEC_WORKFLOW_EXTRA_CORS_ORIGINS;
+  if (extraOrigins) {
+    origins.push(
+      ...extraOrigins.split(',').map(origin => origin.trim()).filter(Boolean)
+    );
+  }
+
   // In non-production environments, also allow Vite dev server origin (port 5173)
   // The Vite proxy forwards requests but preserves the Origin header
   // Use !== 'production' to be permissive by default for local dev tools
@@ -50,8 +58,8 @@ export function generateAllowedOrigins(port: number): string[] {
  */
 export function isLocalhostAddress(address: string): boolean {
   return address === 'localhost' ||
-         address === '::1' || // IPv6 localhost
-         address.startsWith('127.'); // Any 127.x.x.x address (includes 127.0.0.1)
+    address === '::1' || // IPv6 localhost
+    address.startsWith('127.'); // Any 127.x.x.x address (includes 127.0.0.1)
 }
 
 /**
@@ -251,9 +259,9 @@ export class AuditLogger {
           };
 
           // Fire and forget - don't await to avoid blocking
-          this.log(entry).catch(() => {});
+          this.log(entry).catch(() => { });
         },
-        () => {} // Ignore errors from reply.then
+        () => { } // Ignore errors from reply.then
       );
     };
   }
