@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useRef, useState, useCallb
 import { useApi } from '../api/api';
 import { useWs } from '../ws/WebSocketProvider';
 import { Howl } from 'howler';
+import notificationSound from '../../assets/sounds/file-sounds-1150-pristine.mp3';
 
 // Split into two contexts to prevent unnecessary re-renders
 // Actions context contains stable functions that don't change
@@ -23,7 +24,7 @@ const NotificationActionsContext = createContext<NotificationActionsContextType 
 const NotificationStateContext = createContext<NotificationStateContextType | undefined>(undefined);
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
-  console.log('[NotificationProvider] ========== COMPONENT MOUNTED WITH DIAGNOSTIC CODE ==========');
+  // console.log('[NotificationProvider] ========== COMPONENT MOUNTED WITH DIAGNOSTIC CODE ==========');
   const { approvals, specs, getSpecTasksProgress } = useApi();
   const { subscribe, unsubscribe } = useWs();
   const prevApprovalsRef = useRef<typeof approvals>([]);
@@ -72,7 +73,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       // Create a simple notification beep programmatically
       // Using a publicly available notification sound for reliable testing
       // You can replace this with a local audio file later
-      const notificationSound = "./assets/sounds/file-sounds-1150-pristine.mp3";
+      // const notificationSound = "./assets/sounds/file-sounds-1150-pristine.mp3";
 
       const sound = new Howl({
         src: [notificationSound],
@@ -332,21 +333,21 @@ function NotificationToasts() {
         <div
           key={notification.id}
           className={`rounded-lg p-4 shadow-lg border transition-all duration-300 ease-in-out ${notification.type === 'error'
-              ? 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200'
-              : notification.type === 'warning'
-                ? 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200'
-                : notification.type === 'success'
-                  ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200'
-                  : 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200'
+            ? 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200'
+            : notification.type === 'warning'
+              ? 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-200'
+              : notification.type === 'success'
+                ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200'
+                : 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200'
             }`}
         >
           <div className="flex items-start justify-between">
             <div className="flex items-start space-x-2">
               <svg
                 className={`w-5 h-5 mt-0.5 flex-shrink-0 ${notification.type === 'error' ? 'text-red-500' :
-                    notification.type === 'warning' ? 'text-yellow-500' :
-                      notification.type === 'success' ? 'text-green-500' :
-                        'text-blue-500'
+                  notification.type === 'warning' ? 'text-yellow-500' :
+                    notification.type === 'success' ? 'text-green-500' :
+                      'text-blue-500'
                   }`}
                 fill="none"
                 stroke="currentColor"
